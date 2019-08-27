@@ -1,0 +1,101 @@
+How to build the ROM?
+
+WARNING : This process will only work on case-sensitive filesystems!
+
+Windows: will not work
+macOS: doesn't work either for HPS+ filesystem - adfs not tried
+Linux: work on Ubuntu and CentOS
+
+System requirement: Your computer needs to be 64-bit and running a 64-bit operating system with at least 250GB of spare hard drive space and 8GB of RAM (or 16GB in a virtual machine).
+
+1. Install docker
+If you have not already done so, install docker
+
+2. Get our docker image
+
+Please run this step before each build, to be sure to get the last docker image.
+
+$ sudo docker pull lineageos4microg/docker-lineage-cicd
+
+3. Create directories
+
+You also have to provide Docker some volumes, where it'll store the source, the resulting builds, the cache and so on. The volumes are:
+
+/srv/src, for the LineageOS sources
+/srv/zips, for the output builds
+/srv/logs, for the output logs
+/srv/ccache, for the ccache
+/srv/local_manifests, for custom manifests (optional)
+/srv/userscripts, for the user scripts (optional)
+When SIGN_BUILDS is true
+
+/srv/keys, for the signing keys
+When BUILD_OVERLAY is true
+
+/srv/tmp, for temporary files
+When LOCAL_MIRROR is true:
+
+/srv/mirror, for the LineageOS mirror
+
+$ sudo mkdir -p \
+/srv/src \
+/srv/zips \
+/srv/logs \
+/srv/ccache \
+/srv/local_manifests \
+/srv/userscripts \
+/srv/keys \
+/srv/tmp \
+
+4. Start build
+Run the following command. Don't forget to replace <my-device> with your device code !
+
+Build for davinci (not officially supported), custom keys, restricted signature spoofing with integrated microG and FDroid
+As there is no official support for this device, we first have to include the sources in the source tree through an XML in the /home/user/manifests folder; from this thread we get the links of:
+
+Device tree: https://github.com/davinci-dev/android_device_xiaomi_davinci
+Common Tree: https://github.com/???
+Kernel: https://github.com/davinci-dev/android_kernel_xiaomi_davinci
+Vendor blobs: https://github.com/davinci-dev/android_vendor_xiaomi_davinci
+
+Then, with the help of lineage.dependencies from the device tree and the common tree we create an XML /home/user/manifests/a6000.xml with this content:
+
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+  <project name="davinci-dev/android_device_xiaomi_davinci" path="device/xiaomi/davinci" remote="github" />
+  <project name="davinci-dev/android_kernel_xiaomi_davinci" path="kernel/xiaomi/davinci" remote="github" />
+  <project name="davinci-dev/android_vendor_xiaomi_davinci" path="vendor/xoaomi/davinci" remote="github" />
+  <project name="LineageOS/android_device_qcom_common" path="device/qcom/common" remote="github" />
+</manifest>
+
+We also want to include our custom packages so, like before, create an XML (for example /home/user/manifests/custom_packages.xml) with this content:
+
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+  <project name="lineageos4microg/android_prebuilts_prebuiltapks" path="prebuilts/prebuiltapks" remote="github" revision="master" />
+</manifest>
+We also set INCLUDE_PROPRIETARY=false, as the proprietary blobs are already provided by the repo https://github.com/dev-harsh1998/prorietary_vendor_lenovo (so we don't have to include the TheMuppets repo).
+
+Now we can just run the build like it was officially supported:
+
+docker run \
+    -e "BRANCH_NAME=lineage-16.0" \
+    -e "DEVICE_LIST=davinci" \
+    -e "SIGN_BUILDS=true" \
+    -e "SIGNATURE_SPOOFING=restricted" \
+    -e "CUSTOM_PACKAGES=GmsCore GsfProxy FakeStore MozillaNlpBackend NominatimNlpBackend com.google.android.maps.jar FDroid FDroidPrivilegedExtension " \
+    -e "INCLUDE_PROPRIETARY=false" \
+    -v "/home/user/lineage:/srv/src" \
+    -v "/home/user/zips:/srv/zips" \
+    -v "/home/user/logs:/srv/logs" \
+    -v "/home/user/cache:/srv/ccache" \
+    -v "/home/user/keys:/srv/keys" \
+    -v "/home/user/manifests:/srv/local_manifests" \
+    lineageos4microg/docker-lineage-cicd
+
+
+5. Get your image!
+When your build is finished, please find your images inside /srv/zips/<my-device> folder. To install, please refer to our wiki.
+If you need help, please join us on our community support Telegram channel.
+To find more information about our docker image and its environment variables here.
+To report an issue about a build, please refer to wiki issues documentation
