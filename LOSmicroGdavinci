@@ -8,8 +8,16 @@ Linux: work on Ubuntu and CentOS
 
 System requirement: Your computer needs to be 64-bit and running a 64-bit operating system with at least 250GB of spare hard drive space and 8GB of RAM (or 16GB in a virtual machine).
 
-1. Install docker
+1. Install and setup docker
 If you have not already done so, install docker
+To start the Docker daemon execute:
+
+sudo systemctl start docker.service
+
+If you want to have Docker daemon start automatically on boot, run:
+
+sudo systemctl enable docker.service
+
 
 2. Get our docker image
 
