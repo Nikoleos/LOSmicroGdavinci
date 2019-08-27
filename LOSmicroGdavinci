@@ -102,12 +102,12 @@ docker run \
     -e "SIGNATURE_SPOOFING=restricted" \
     -e "CUSTOM_PACKAGES=GmsCore GsfProxy FakeStore MozillaNlpBackend NominatimNlpBackend com.google.android.maps.jar FDroid FDroidPrivilegedExtension " \
     -e "INCLUDE_PROPRIETARY=false" \
-    -v "/home/user/lineage:/srv/src" \
-    -v "/home/user/zips:/srv/zips" \
-    -v "/home/user/logs:/srv/logs" \
-    -v "/home/user/cache:/srv/ccache" \
-    -v "/home/user/keys:/srv/keys" \
-    -v "/home/user/manifests:/srv/local_manifests" \
+    -v "/home/nicolas/lineage:/srv/src" \
+    -v "/home/nicolas/zips:/srv/zips" \
+    -v "/home/nicolas/logs:/srv/logs" \
+    -v "/home/nicolas/cache:/srv/ccache" \
+    -v "/home/nicolas/keys:/srv/keys" \
+    -v "/home/nicolas/manifests:/srv/local_manifests" \
     lineageos4microg/docker-lineage-cicd
 
 
