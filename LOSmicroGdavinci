@@ -102,6 +102,7 @@ docker run \
     -e "SIGNATURE_SPOOFING=restricted" \
     -e "CUSTOM_PACKAGES=GmsCore GsfProxy FakeStore MozillaNlpBackend NominatimNlpBackend com.google.android.maps.jar FDroid FDroidPrivilegedExtension " \
     -e "INCLUDE_PROPRIETARY=false" \
+    -e "LOCAL_MIRROR=false" \
     -v "/home/nicolas/lineage:/srv/src" \
     -v "/home/nicolas/zips:/srv/zips" \
     -v "/home/nicolas/logs:/srv/logs" \
